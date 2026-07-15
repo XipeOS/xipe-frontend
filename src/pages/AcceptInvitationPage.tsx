@@ -152,7 +152,16 @@ export const AcceptInvitationPage = () => {
 
   return (
     <div style={{ maxWidth: 400, margin: '80px auto', fontFamily: 'sans-serif' }}>
-      <h1>Aceptar invitación</h1>
+      <h1
+  style={{
+    fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+    lineHeight: 1.1,
+    marginBottom: '1.5rem',
+    textAlign: 'center',
+  }}
+>
+  Aceptar invitación
+</h1>
       <p>Email: <strong>{invitation?.email}</strong></p>
       <p style={{ fontSize: 12, color: '#666' }}>
         Expira: {new Date(invitation?.expiresAt || '').toLocaleString()}
