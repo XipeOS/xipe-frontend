@@ -151,13 +151,24 @@ export const AcceptInvitationPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', fontFamily: 'sans-serif' }}>
+    <div
+  style={{
+    width: '100%',
+    maxWidth: 600,
+    margin: '80px auto',
+    padding: '0 24px',
+    boxSizing: 'border-box',
+    fontFamily: 'sans-serif',
+    textAlign: 'center',
+  }}
+>
       <h1
   style={{
-    fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-    lineHeight: 1.1,
-    marginBottom: '1.5rem',
+    fontSize: '2.5rem',
+    lineHeight: '1.2',
+    margin: '0 0 24px',
     textAlign: 'center',
+    whiteSpace: 'nowrap',
   }}
 >
   Aceptar invitación
