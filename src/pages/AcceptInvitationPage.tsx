@@ -22,6 +22,11 @@ export const AcceptInvitationPage = () => {
   const [formData, setFormData] = useState({ password: '', fullName: '' })
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
+useEffect(() => {
+  if (isAuthenticated) {
+    navigate('/dashboard', { replace: true })
+  }
+}, [isAuthenticated, navigate])
 
   // Valida invitación al cargar
   useEffect(() => {
