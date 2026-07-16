@@ -1,3 +1,13 @@
+/**
+ * useAuth.ts
+ *
+ * ÚNICO CAMBIO sobre tu archivo original: se agrega getAccessToken(),
+ * para que AdminLogsPage (y cualquier otra página) obtenga el JWT actual
+ * sin repetir supabase.auth.getSession() en cada componente.
+ * (El panel original intentaba usar `user.getSession()`, que no existe —
+ * ver observación 11.1. `supabase` ya se exponía desde este hook.)
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
@@ -30,11 +40,6 @@ export interface AuthState {
   isAuthenticated: boolean
 }
 
-/**
- * Hook que maneja autenticación con Supabase.
- * Supabase maneja persistencia y refresh automáticamente.
- * No guardamos el JWT manualmente en localStorage.
- */
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -43,7 +48,6 @@ export const useAuth = () => {
     isAuthenticated: false,
   })
 
-  // Al montar, restaura sesión existente
   useEffect(() => {
     const restoreSession = async () => {
       const {
@@ -60,7 +64,6 @@ export const useAuth = () => {
     restoreSession()
   }, [])
 
-  // Escucha cambios de autenticación (login, logout, cambios de sesión)
   useEffect(() => {
     const {
       data: { subscription },
@@ -147,7 +150,11 @@ export const useAuth = () => {
   const logout = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true }))
 
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      console.error('Error al cerrar sesión:', error.message)
+    }
 
     setState({
       user: null,
@@ -157,10 +164,24 @@ export const useAuth = () => {
     })
   }, [])
 
+  /**
+   * NUEVO: obtiene el access_token actual, o null si no hay sesión.
+   * Úsalo en cualquier página que necesite llamar al backend directamente
+   * (ej. AdminLogsPage) en vez de reimplementar supabase.auth.getSession().
+   */
+  const getAccessToken = useCallback(async (): Promise<string | null> => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    return session?.access_token ?? null
+  }, [])
+
   return {
     ...state,
     supabase,
     login,
     logout,
+    getAccessToken,
   }
 }
